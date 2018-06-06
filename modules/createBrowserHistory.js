@@ -17,9 +17,14 @@ import {
   isExtraneousPopstateEvent
 } from "./DOMUtils";
 
+//定义常量
+
+// History.back()、History.forward()、History.go() 浏览器前进倒退触发
 const PopStateEvent = "popstate";
 const HashChangeEvent = "hashchange";
 
+// 获取State 浏览器会将这个对象序列化以后保留在本地
+// 兼容ie
 const getHistoryState = () => {
   try {
     return window.history.state || {};
@@ -35,10 +40,14 @@ const getHistoryState = () => {
  * pushState, replaceState, and the popstate event.
  */
 const createBrowserHistory = (props = {}) => {
+  // 环境判断
   invariant(canUseDOM, "Browser history needs a DOM");
 
+  //缓存对象
   const globalHistory = window.history;
+  // history 支持度检测
   const canUseHistory = supportsHistory();
+  // 侦听器支持度检测
   const needsHashChangeListener = !supportsPopStateOnHashChange();
 
   const {
@@ -70,7 +79,7 @@ const createBrowserHistory = (props = {}) => {
 
     return createLocation(path, state, key);
   };
-
+  // 生成随机key
   const createKey = () =>
     Math.random()
       .toString(36)
@@ -251,7 +260,7 @@ const createBrowserHistory = (props = {}) => {
       }
     );
   };
-
+  
   const go = n => {
     globalHistory.go(n);
   };
@@ -307,7 +316,7 @@ const createBrowserHistory = (props = {}) => {
       unlisten();
     };
   };
-
+  // 组装对象
   const history = {
     length: globalHistory.length,
     action: "POP",
@@ -321,7 +330,7 @@ const createBrowserHistory = (props = {}) => {
     block,
     listen
   };
-
+  // 把组装对象返回出去
   return history;
 };
 
